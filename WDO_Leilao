@@ -1,0 +1,15 @@
+Var
+//Bandas de Bollinger
+  bandaSup, bandaInf, preco: Float;
+         
+  media: Float; 
+Begin
+  
+  // Inicialização de valores
+  bandaSup := BollingerBands(1.4, 20, 0)|0|;
+  bandaInf := BollingerBands(1.4, 20, 0)|1|;
+  preco := Fechamento;
+  media := MediaExp(21,5);
+
+
+End;
