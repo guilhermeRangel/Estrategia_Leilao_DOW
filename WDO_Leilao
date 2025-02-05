@@ -1,15 +1,48 @@
+//Variaveis
 Var
-//Bandas de Bollinger
-  bandaSup, bandaInf, preco: Float;
-         
-  media: Float; 
+  bandaSup,bandaInf,preco : Float;
+  endGame                 : Boolean;
+  mediaMovel              : Float;
+
 Begin
-  
-  // Inicialização de valores
-  bandaSup := BollingerBands(1.4, 20, 0)|0|;
-  bandaInf := BollingerBands(1.4, 20, 0)|1|;
+  // Inicialização
+  endGame := true;
+  bandaSup := BollingerBands(1.4,20,0)|0|;
+  bandaInf := BollingerBands(1.4,20,0)|1|;
   preco := Fechamento;
-  media := MediaExp(21,5);
+  mediaMovel := Media(21, Close);
+
+  //Inicio
+  if endGame then
+    begin
+      // Verifica se nao tem posicao
+      if not HasPosition then
+        begin
+        //Compra se o preco tivar abaixo da banda
+          if (preco < bandaInf) then
+            BuyAtMarket;
+         //Vende se tiver abaixo da banda
+          if (preco > bandaSup) then
+            SellShortAtMarket;
+        end;
 
 
+       // Saída: Fecha a posição quando o preço tocar a média
+      if HasPosition then
+        begin
+          //Teste se atingiu o objetivo de compra
+          if (IsBought and (preco >= mediaMovel)) then
+            ClosePosition;
+            endGame := false;
+          //Realiza uma ordem de venda a mercado caso exista uma posição de compra
+          if (IsSold and (preco <= mediaMovel)) then
+             ClosePosition;
+             endGame := false;
+        end;
+      
+
+      //Grafico
+      Plot(mediaMovel);
+
+    end;//endGame
 End;
